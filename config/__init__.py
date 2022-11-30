@@ -5,7 +5,8 @@ def build_config(args):
     print('==============================')
     print('Config: {} ...'.format(args.version.upper()))
     
-    if 'yolo' in args.version:
-        cfg = yolo_config[args.version]
+    if args.detector in ['yolo_free_nano', 'yolo_free_tiny',\
+                         'yolo_free_large', 'yolo_free_huge']:
+        cfg = yolo_config[args.detector]
 
     return cfg

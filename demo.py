@@ -25,7 +25,6 @@ def parse_args():
     parser.add_argument('--cuda', action='store_true', default=False, 
                         help='use cuda.')
 
-
     # data
     parser.add_argument('--mode', type=str, default='image',
                         help='image, video or camera')
@@ -70,7 +69,6 @@ def parse_args():
                         help='conference threshold')
     parser.add_argument('--nms_thresh',type=float, default=0.5,
                         help='conference threshold')
-
 
     return parser.parse_args()
 
