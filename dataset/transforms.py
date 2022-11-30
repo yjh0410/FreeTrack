@@ -30,7 +30,7 @@ class BaseTransform(object):
             target[:, [1, 3]] = target[:, [1, 3]] / img_h0 * img_h
 
             # to tensor
-            target = torch.as_tensor(target["boxes"]).float()
+            target = torch.as_tensor(target).float()
 
         # pad img
         img_h0, img_w0 = img_tensor.shape[1:]
