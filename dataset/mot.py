@@ -188,7 +188,7 @@ if __name__ == "__main__":
             x2 = int(x2)
             y2 = int(y2)
             cls_id = int(cls_id)
-            track_id = str(track_id)
+            track_id = str(int(track_id))
             # class name
             label = mot_class_labels[cls_id]
             image = cv2.rectangle(image, (x1, y1), (x2, y2), (0,0,255), 2)
