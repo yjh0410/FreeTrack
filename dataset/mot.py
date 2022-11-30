@@ -162,7 +162,7 @@ if __name__ == "__main__":
 
     dataset = MOTDataset(
         img_size=img_size,
-        data_dir='/mnt/share/ssd2/dataset/MOT17/',
+        data_dir='/mnt/share/ssd2/dataset/MOT20/',
         image_set='train',
         json_file='val_half.json',
         transform=transform
