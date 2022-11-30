@@ -106,8 +106,7 @@ def run(args,
     # ------------------------- Image ----------------------------
     elif args.mode == 'image':
         for i, img_id in enumerate(os.listdir(args.path_to_img)):
-            image = cv2.imread(
-                os.path.join(args.path_to_img, img_id, cv2.IMREAD_COLOR))
+            image = cv2.imread(os.path.join(args.path_to_img, img_id))
             orig_h, orig_w, _ = image.shape
 
             # TODO:
