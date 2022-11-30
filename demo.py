@@ -20,8 +20,6 @@ def parse_args():
     # basic
     parser.add_argument('-size', '--img_size', default=640, type=int,
                         help='the max size of input image')
-    parser.add_argument('--show', action='store_true', default=False,
-                        help='show the visulization results.')
     parser.add_argument('--cuda', action='store_true', default=False, 
                         help='use cuda.')
 
