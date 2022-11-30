@@ -179,9 +179,9 @@ if __name__ == "__main__":
 
         boxes = target[..., :4].numpy()
         labels = target[..., 4].numpy()
-        track_id = target[..., 5].numpy()
+        track_ids = target[..., 5].numpy()
 
-        for box, cls_id in zip(boxes, labels):
+        for box, cls_id, track_id in zip(boxes, labels, track_ids):
             x1, y1, x2, y2 = box
             x1 = int(x1)
             y1 = int(y1)
