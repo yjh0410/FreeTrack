@@ -181,18 +181,19 @@ if __name__ == "__main__":
         labels = target[..., 4].numpy()
         track_id = target[..., 5].numpy()
 
-        for box, label in zip(boxes, labels):
+        for box, cls_id in zip(boxes, labels):
             x1, y1, x2, y2 = box
             x1 = int(x1)
             y1 = int(y1)
             x2 = int(x2)
             y2 = int(y2)
-            cls_id = int(label)
+            cls_id = int(cls_id)
+            track_id = int(track_id)
             # class name
             label = mot_class_labels[cls_id]
             image = cv2.rectangle(image, (x1, y1), (x2, y2), (0,0,255), 2)
             # put the test on the bbox
-            cv2.putText(image, label, (x1, y1 - 5), 0, 0.5, (0, 0, 0), 1, lineType=cv2.LINE_AA)
+            cv2.putText(image, track_id, (x1, y1 - 5), 0, 0.5, (0, 0, 0), 1, lineType=cv2.LINE_AA)
         cv2.imshow('gt', image)
         # cv2.imwrite(str(i)+'.jpg', img)
         cv2.waitKey(0)
