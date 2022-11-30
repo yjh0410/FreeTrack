@@ -8,11 +8,10 @@ from .head import build_head
 
 # Anchor-free YOLO
 class FreeYOLO(nn.Module):
-    def __init__(self, cfg, device, num_classes=1):
+    def __init__(self, cfg, num_classes=1):
         super(FreeYOLO, self).__init__()
         # --------- Basic Parameters ----------
         self.cfg = cfg
-        self.device = device
         self.stride = cfg['stride']
         self.num_classes = num_classes
         
