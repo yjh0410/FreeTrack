@@ -121,6 +121,7 @@ class PostProcessor(object):
         # size of bbox
         pred_box_wh = np.exp(pred_regs[..., 2:]) * self.expand_strides
 
+        # cwcywh -> x1y1x2y2
         pred_x1y1 = pred_ctr_xy - 0.5 * pred_box_wh
         pred_x2y2 = pred_ctr_xy + 0.5 * pred_box_wh
         pred_box = np.concatenate([pred_x1y1, pred_x2y2], axis=-1)
