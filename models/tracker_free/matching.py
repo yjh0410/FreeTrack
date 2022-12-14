@@ -78,7 +78,7 @@ def ious(axyxys, bxyxys):
 
     iou = inter / union
 
-    return iou, union
+    return iou
 
 
 def iou_distance(atracks, btracks):
