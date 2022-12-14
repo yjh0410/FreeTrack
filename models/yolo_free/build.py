@@ -9,8 +9,8 @@ from .post_process import PostProcessor
 
 
 model_urls = {
-    'yolo_free_nano': 'https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_30.5.pth',
-    'yolo_free_tiny': 'https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_tiny_34.4.pth',
+    'yolo_free_nano': 'https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_nano_ch_31.3.pth',
+    'yolo_free_tiny': 'https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_tiny_ch_34.7.pth',
     'yolo_free_large': 'https://github.com/yjh0410/FreeYOLO/releases/download/weight/yolo_free_large_48.3.pth',
     'yolo_free_huge': None,
 }
