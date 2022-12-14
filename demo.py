@@ -13,6 +13,8 @@ from config import build_config
 from models.build import build_tracker
 from models.build import build_detector
 
+IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='FreeTrack Demo')
@@ -71,6 +73,17 @@ def parse_args():
     return parser.parse_args()
 
 
+def get_image_list(path):
+    image_names = []
+    for maindir, subdir, file_name_list in os.walk(path):
+        for filename in file_name_list:
+            apath = os.path.join(maindir, filename)
+            ext = os.path.splitext(apath)[1]
+            if ext in IMAGE_EXT:
+                image_names.append(apath)
+    return image_names
+
+
 def run(args,
         tracker,
         detector,
@@ -89,24 +102,123 @@ def run(args,
             if ret:
                 if cv2.waitKey(1) == ord('q'):
                     break
-                orig_h, orig_w, _ = frame.shape
+                # ------------------------- Detection ---------------------------
+                # preprocess
+                x, ratio = transform(frame)
+                x = x.unsqueeze(0).to(device)
 
-                # TODO:
-                # process camera data
+                # detect
+                t0 = time.time()
+                outputs = detector(x)
+                print("detect time: {:.1f} ms".format((time.time() - t0)*1000))
+
+                # post process
+                t1 = time.time()
+                bboxes, scores, labels = post_processor(outputs)
+                bboxes /= ratio
+                print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
+
+                # track
+                t2 = time.time()
+                if len(bboxes) > 0:
+                    online_targets = tracker.update(scores, bboxes, labels)
+                    online_xywhs = []
+                    online_ids = []
+                    online_scores = []
+                    for t in online_targets:
+                        xywh = t.xywh
+                        tid = t.track_id
+                        vertical = xywh[2] / xywh[3] > args.aspect_ratio_thresh
+                        if xywh[2] * xywh[3] > args.min_box_area and not vertical:
+                            online_xywhs.append(xywh)
+                            online_ids.append(tid)
+                            online_scores.append(t.score)
+                            results.append(
+                                f"{frame_id},{tid},{xywh[0]:.2f},{xywh[1]:.2f},{xywh[2]:.2f},{xywh[3]:.2f},{t.score:.2f},-1,-1,-1\n"
+                                )
+                    print("tracking time: {:.1f} ms".format((time.time() - t2)*1000))
+                    
+                    # plot tracking results
+                    online_im = plot_tracking(
+                        frame, online_xywhs, online_ids, frame_id=frame_id + 1, fps=1. / (time.time() - t0)
+                    )
+                else:
+                    online_im = frame
+
+                # show results
+                if args.show:
+                    cv2.imshow('tracking', online_im)
 
             else:
                 break
+            frame_id += 1
+
         cap.release()
         cv2.destroyAllWindows()
 
     # ------------------------- Image ----------------------------
     elif args.mode == 'image':
-        for i, img_id in enumerate(os.listdir(args.path_to_img)):
-            image = cv2.imread(os.path.join(args.path_to_img, img_id))
-            orig_h, orig_w, _ = image.shape
+        files = get_image_list(args.path_to_img)
+        files.sort()
+        print(files)
+        for frame_id, img_path in enumerate(files, 1):
+            image = cv2.imread(os.path.join(img_path))
+            # preprocess
+            x, ratio = transform(image)
+            x = x.unsqueeze(0).to(device)
 
-            # TODO:
-            # process images
+            # detect
+            t0 = time.time()
+            outputs = detector(x)
+            print("detect time: {:.1f} ms".format((time.time() - t0)*1000))
+
+            # post process
+            t1 = time.time()
+            bboxes, scores, labels = post_processor(outputs)
+            bboxes /= ratio
+            print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
+
+            # track
+            t2 = time.time()
+            if len(bboxes) > 0:
+                online_targets = tracker.update(scores, bboxes, labels)
+                online_xywhs = []
+                online_ids = []
+                online_scores = []
+                for t in online_targets:
+                    xywh = t.xywh
+                    tid = t.track_id
+                    vertical = xywh[2] / xywh[3] > args.aspect_ratio_thresh
+                    if xywh[2] * xywh[3] > args.min_box_area and not vertical:
+                        online_xywhs.append(xywh)
+                        online_ids.append(tid)
+                        online_scores.append(t.score)
+                        results.append(
+                            f"{frame_id},{tid},{xywh[0]:.2f},{xywh[1]:.2f},{xywh[2]:.2f},{xywh[3]:.2f},{t.score:.2f},-1,-1,-1\n"
+                            )
+                print("tracking time: {:.1f} ms".format((time.time() - t2)*1000))
+                
+                # plot tracking results
+                online_im = plot_tracking(
+                    frame, online_xywhs, online_ids, frame_id=frame_id + 1, fps=1. / (time.time() - t0)
+                )
+            else:
+                online_im = frame
+
+            # save results
+            if args.save:
+                vid_writer.write(online_im)
+            # show results
+            if args.show:
+                cv2.imshow('tracking', online_im)
+
+            ch = cv2.waitKey(1)
+            if ch == 27 or ch == ord("q") or ch == ord("Q"):
+                break
+
+            frame_id += 1
+
+        cv2.destroyAllWindows()
             
     # ------------------------- Video ---------------------------
     elif args.mode == 'video':
@@ -132,11 +244,8 @@ def run(args,
             
             if ret:
                 # ------------------------- Detection ---------------------------
-                orig_h, orig_w, _ = frame.shape
-                ratio = min(args.img_size / orig_h, args.img_size / orig_w)
-
-                # prepare
-                x = transform(frame)[0]
+                # preprocess
+                x, ratio = transform(frame)
                 x = x.unsqueeze(0).to(device)
 
                 # detect
@@ -151,6 +260,7 @@ def run(args,
                 print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
 
                 # track
+                t2 = time.time()
                 if len(bboxes) > 0:
                     online_targets = tracker.update(scores, bboxes, labels)
                     online_xywhs = []
@@ -167,6 +277,8 @@ def run(args,
                             results.append(
                                 f"{frame_id},{tid},{xywh[0]:.2f},{xywh[1]:.2f},{xywh[2]:.2f},{xywh[3]:.2f},{t.score:.2f},-1,-1,-1\n"
                                 )
+                    print("tracking time: {:.1f} ms".format((time.time() - t2)*1000))
+                    
                     # plot tracking results
                     online_im = plot_tracking(
                         frame, online_xywhs, online_ids, frame_id=frame_id + 1, fps=1. / (time.time() - t0)
