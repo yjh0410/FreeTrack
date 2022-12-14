@@ -217,10 +217,9 @@ def run(args,
                 cv2.namedWindow('tracking', 0)
                 cv2.resizeWindow('tracking', int(w), int(h))
                 cv2.imshow('tracking', online_im)
-
-            ch = cv2.waitKey(1)
-            if ch == 27 or ch == ord("q") or ch == ord("Q"):
-                break
+                ch = cv2.waitKey(0)
+                if ch == 27 or ch == ord("q") or ch == ord("Q"):
+                    break
 
             frame_id += 1
 
