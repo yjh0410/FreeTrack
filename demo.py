@@ -203,10 +203,10 @@ def run(args,
                 
                 # plot tracking results
                 online_im = plot_tracking(
-                    frame, online_xywhs, online_ids, frame_id=frame_id + 1, fps=1. / (time.time() - t0)
+                    image, online_xywhs, online_ids, frame_id=frame_id + 1, fps=1. / (time.time() - t0)
                 )
             else:
-                online_im = frame
+                online_im = image
 
             # save results
             if args.save:
