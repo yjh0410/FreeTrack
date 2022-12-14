@@ -213,9 +213,6 @@ def run(args,
                 vid_writer.write(online_im)
             # show results
             if args.show:
-                h, w = online_im.shape[:2]
-                cv2.namedWindow('tracking', 0)
-                cv2.resizeWindow('tracking', int(w), int(h))
                 cv2.imshow('tracking', online_im)
                 ch = cv2.waitKey(0)
                 if ch == 27 or ch == ord("q") or ch == ord("Q"):
