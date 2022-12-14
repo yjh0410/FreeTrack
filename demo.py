@@ -160,7 +160,6 @@ def run(args,
     elif args.mode == 'image':
         files = get_image_list(args.path_to_img)
         files.sort()
-        print(files)
         for frame_id, img_path in enumerate(files, 1):
             image = cv2.imread(os.path.join(img_path))
             # preprocess
@@ -322,6 +321,7 @@ if __name__ == '__main__':
 
     # build detector
     detector, post_processor = build_detector(args, cfg)
+    detector = detector.to(device).eval()
     
     # build tracker
     tracker = build_tracker(args)

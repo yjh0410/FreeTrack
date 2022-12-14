@@ -140,6 +140,7 @@ class PostProcessor(object):
             img_size: (Tulpe): [img_h, img_w]
             predictions: (ndarray) [n_anchors_all, 4+1+C]
         """
+        predictions = predictions.cpu().numpy()
         reg_preds = predictions[..., :4]
         obj_preds = predictions[..., 4:5]
         cls_preds = predictions[..., 5:]
