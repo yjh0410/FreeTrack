@@ -71,7 +71,7 @@ def ious(axyxys, bxyxys):
     lt = np.maximum(axyxys[:, None, :2], bxyxys[:, :2])  # [N,M,2]
     rb = np.minimum(axyxys[:, None, 2:], bxyxys[:, 2:])  # [N,M,2]
 
-    wh = np.clip(rb - lt, a_min=0)     # [N,M,2]
+    wh = np.clip(rb - lt, a_min=0, a_max=1e4)     # [N,M,2]
     inter = wh[:, :, 0] * wh[:, :, 1]  # [N,M]
 
     union = area1[:, None] + area2 - inter
