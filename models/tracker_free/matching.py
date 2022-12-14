@@ -62,6 +62,9 @@ def ious(axyxys, bxyxys):
     if ious.size == 0:
         return ious
 
+    axyxys = np.ascontiguousarray(axyxys, dtype=np.float)
+    bxyxys = np.ascontiguousarray(bxyxys, dtype=np.float)
+    
     area1 = (axyxys[:, 2] - axyxys[:, 0]) * (axyxys[:, 3] - axyxys[:, 1])
     area2 = (bxyxys[:, 2] - bxyxys[:, 0]) * (bxyxys[:, 3] - bxyxys[:, 1])
 
@@ -93,8 +96,6 @@ def iou_distance(atracks, btracks):
     else:
         axyxys = [track.xyxy for track in atracks]
         bxyxys = [track.xyxy for track in btracks]
-    print(axyxys)
-    print(bxyxys)
     _ious = ious(axyxys, bxyxys)
     cost_matrix = 1 - _ious
 
