@@ -160,6 +160,9 @@ def run(args,
     elif args.mode == 'image':
         files = get_image_list(args.path_to_img)
         files.sort()
+        # start tracking
+        frame_id = 0
+        results = []
         for frame_id, img_path in enumerate(files, 1):
             image = cv2.imread(os.path.join(img_path))
             # preprocess
