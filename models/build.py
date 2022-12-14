@@ -1,12 +1,12 @@
 # import tracker
-from .tracker_free.build import build_tracker_free
+from .byte_tracker.build import build_byte_tracker
 # import detector
 from .yolo_free.build import build_yolo_free
 
 
 def build_tracker(args):
-    if args.tracker == 'tracker_free':
-        return build_tracker_free(args)
+    if args.tracker == 'byte_tracker':
+        return build_byte_tracker(args)
     else:
         raise NotImplementedError
 

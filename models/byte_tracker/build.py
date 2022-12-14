@@ -1,8 +1,8 @@
-from .tracker_free import FreeTracker
+from .byte_tracker import ByteTracker
 
 
-def build_tracker_free(args):
-    tracker = FreeTracker(
+def build_byte_tracker(args):
+    tracker = ByteTracker(
         track_thresh=args.track_thresh,
         track_buffer=args.track_buffer,
         frame_rate=args.fps,

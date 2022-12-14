@@ -146,7 +146,7 @@ class STrack(BaseTrack):
         return 'OT_{}_({}-{})'.format(self.track_id, self.start_frame, self.end_frame)
 
 
-class FreeTracker(object):
+class ByteTracker(object):
     def __init__(self, track_thresh=0.6, track_buffer=30, frame_rate=30, match_thresh=0.9, mot20=False):
         self.tracked_stracks = []  # type: list[STrack]
         self.lost_stracks = []  # type: list[STrack]

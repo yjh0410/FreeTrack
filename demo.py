@@ -42,7 +42,7 @@ def parse_args():
                         help='save results.')
 
     # tracker
-    parser.add_argument('--tracker', default='tracker_free', type=str,
+    parser.add_argument('--tracker', default='byte_tracker', type=str,
                         help='build FreeTrack')
     parser.add_argument("--track_thresh", type=float, default=0.5, 
                         help="tracking confidence threshold")
