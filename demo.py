@@ -97,6 +97,9 @@ def run(args,
     if args.mode == 'camera':
         print('use camera !!!')
         cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        frame_id = 0
+        results = []
+        # start tracking
         while True:
             ret, frame = cap.read()
             if ret:
@@ -106,15 +109,17 @@ def run(args,
                 # preprocess
                 x, ratio = transform(frame)
                 x = x.unsqueeze(0).to(device)
+                img_size = (x.shape[2], x.shape[3]) # (img_h, img_w)
 
                 # detect
                 t0 = time.time()
                 outputs = detector(x)
+                print("=============== Frame-{} ================".format(frame_id))
                 print("detect time: {:.1f} ms".format((time.time() - t0)*1000))
 
                 # post process
                 t1 = time.time()
-                bboxes, scores, labels = post_processor(outputs)
+                bboxes, scores, labels = post_processor(img_size, outputs)
                 bboxes /= ratio
                 print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
 
@@ -148,6 +153,9 @@ def run(args,
                 # show results
                 if args.show:
                     cv2.imshow('tracking', online_im)
+                    ch = cv2.waitKey(1)
+                    if ch == 27 or ch == ord("q") or ch == ord("Q"):
+                        break
 
             else:
                 break
@@ -173,6 +181,7 @@ def run(args,
             # detect
             t0 = time.time()
             outputs = detector(x)
+            print("=============== Frame-{} ================".format(frame_id))
             print("detect time: {:.1f} ms".format((time.time() - t0)*1000))
 
             # post process
@@ -214,7 +223,7 @@ def run(args,
             # show results
             if args.show:
                 cv2.imshow('tracking', online_im)
-                ch = cv2.waitKey(0)
+                ch = cv2.waitKey(1)
                 if ch == 27 or ch == ord("q") or ch == ord("Q"):
                     break
 
@@ -249,15 +258,17 @@ def run(args,
                 # preprocess
                 x, ratio = transform(frame)
                 x = x.unsqueeze(0).to(device)
+                img_size = (x.shape[2], x.shape[3]) # (img_h, img_w)
 
                 # detect
                 t0 = time.time()
                 outputs = detector(x)
+                print("=============== Frame-{} ================".format(frame_id))
                 print("detect time: {:.1f} ms".format((time.time() - t0)*1000))
 
                 # post process
                 t1 = time.time()
-                bboxes, scores, labels = post_processor(outputs)
+                bboxes, scores, labels = post_processor(img_size, outputs)
                 bboxes /= ratio
                 print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
 
@@ -294,10 +305,9 @@ def run(args,
                 # show results
                 if args.show:
                     cv2.imshow('tracking', online_im)
-
-                ch = cv2.waitKey(1)
-                if ch == 27 or ch == ord("q") or ch == ord("Q"):
-                    break
+                    ch = cv2.waitKey(1)
+                    if ch == 27 or ch == ord("q") or ch == ord("Q"):
+                        break
             else:
                 break
             frame_id += 1
