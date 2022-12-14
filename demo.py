@@ -166,6 +166,7 @@ def run(args,
             # preprocess
             x, ratio = transform(image)
             x = x.unsqueeze(0).to(device)
+            img_size = (x.shape[2], x.shape[3]) # (img_h, img_w)
 
             # detect
             t0 = time.time()
@@ -174,7 +175,7 @@ def run(args,
 
             # post process
             t1 = time.time()
-            bboxes, scores, labels = post_processor(outputs)
+            bboxes, scores, labels = post_processor(img_size, outputs)
             bboxes /= ratio
             print("post-process time: {:.1f} ms".format((time.time() - t1)*1000))
 
@@ -320,11 +321,12 @@ if __name__ == '__main__':
     cfg = build_config(args)
 
     # build detector
-    detector = build_detector(args, cfg)
+    detector, post_processor = build_detector(args, cfg)
     
     # build tracker
     tracker = build_tracker(args)
 
+    # build post-processor
     # transform
     transform = BaseTransform(img_size=args.img_size)
 
@@ -333,4 +335,5 @@ if __name__ == '__main__':
         tracker=tracker,
         detector=detector, 
         device=device,
+        post_processor=post_processor,
         transform=transform)
