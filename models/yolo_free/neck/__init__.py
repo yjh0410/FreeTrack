@@ -4,8 +4,6 @@ from .pafpn import PaFPNELAN
 
 def build_fpn(cfg, in_dims, out_dim):
     model = cfg['fpn']
-    print('==============================')
-    print('FPN: {}'.format(model))
     # build neck
     if model == 'pafpn_elan':
         fpn_net = PaFPNELAN(in_dims=in_dims,
@@ -20,8 +18,6 @@ def build_fpn(cfg, in_dims, out_dim):
 
 def build_neck(cfg, in_dim, out_dim):
     model = cfg['neck']
-    print('==============================')
-    print('Neck: {}'.format(model))
     # build neck
     if model == 'spp_block_csp':
         neck = SPPBlockCSP(
