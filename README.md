@@ -2,11 +2,11 @@
 
 ## Detector
 
-[FreeYOLO](https://github.com/yjh0410/FreeYOLO).
+I use my [FreeYOLO](https://github.com/yjh0410/FreeYOLO) as the detector, which is only pretrained on CrowdHuman dataset.
 
 ## Tracker
 
-[ByteTrack](https://github.com/ifzhang/ByteTrack)
+I use the simple and strong [ByteTrack](https://github.com/ifzhang/ByteTrack) as the tracker.
 
 ## Demo
 # Demo
